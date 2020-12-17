@@ -1,0 +1,8 @@
+{
+  "app_name" : "WeatherApp",
+  "city_page_title" : "Hey, com'è il tempo a",
+  "city_page_search_placeholder" : "Inserisci la città",
+  "city_page_search_no_result" : "Nessun risultato trovato",
+  "today" : "Oggi",
+  "next_days" : "Giorni Successivi"
+}

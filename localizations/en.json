@@ -1,0 +1,8 @@
+{
+  "app_name" : "WeatherApp",
+  "city_page_title" : "Hey, how is the weather in",
+  "city_page_search_placeholder" : "Search for city name",
+  "city_page_search_no_result" : "No result for the specified item",
+  "today" : "Today",
+  "next_days" : "Next Days"
+}
