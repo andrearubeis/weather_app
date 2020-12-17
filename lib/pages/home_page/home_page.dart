@@ -12,7 +12,7 @@ import 'package:weather_app/common/widgets/weather_hour_cell.dart';
 import 'package:weather_app/model/open_weather_model/date_time_weather.dart';
 import 'package:weather_app/pages/home_page/home_view_model.dart';
 import 'package:intl/intl.dart';
-import 'package:weather_app/pages/home_page/widget/bottom_sheet.dart';
+import 'package:weather_app/pages/home_page/widget/home_page_next_days_bottom_sheet.dart';
 import 'package:weather_app/pages/splash_page/splash_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage>  {
 						future: model.weatherOnDay,
 						builder: (BuildContext context, AsyncSnapshot<List<List<DateTimeWeather>>> snapshot) {
 							if(snapshot.hasData) {
-								return NextDaysBottomSheet(snapshot.data, _controller);
+								return HomePageNextDaysBottomSheet(snapshot.data, _controller);
 							} else {
 								return Container(
 									color: WeatherAppTheme.primaryNttAccent(context),
