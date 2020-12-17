@@ -17,7 +17,7 @@ class UIHelper {
       padding: padding ?? const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 24.0),
       onTap: onTap != null ? (flushBar) => onTap(flushBar) : null,
       isDismissible: isDismissible,
-      backgroundColor: backgroundColor ?? WeatherAppTheme.primaryNttAccent(context),
+      backgroundColor: backgroundColor ?? WeatherAppTheme.primaryAccent(context),
       duration: duration ?? Duration(seconds: 3),
       messageText: Text(
         message ?? "",
