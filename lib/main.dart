@@ -23,10 +23,10 @@ void main() {
 class WeatherApp extends StatefulWidget {
   // This widget is the root of your application.
   @override
-  _SobosAppState createState() => _SobosAppState();
+  _WeatherAppState createState() => _WeatherAppState();
 }
 
-class _SobosAppState extends State<WeatherApp> {
+class _WeatherAppState extends State<WeatherApp> {
 
   StreamSubscription<WeatherError> weatherErrorSubscription;
 

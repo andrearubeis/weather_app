@@ -22,9 +22,7 @@ class _SplashPageState extends State<SplashPage> {
 			builder: (context, model, child) {
 				return Scaffold(
 					body: Center(
-						child: Text(
-							"SplashPage"
-						),
+						child: Container(),
 					),
 				);
 			},

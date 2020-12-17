@@ -33,14 +33,14 @@ class _SearchCityPageState extends State<SearchCityPage> {
 				return Scaffold(
 					body: SafeArea(
 						top: false,
-						child: buildBody(model)
+						child: buildPageBody(model)
 					)
 				);
 			},
 			viewModelBuilder: () => widget._model);
 	}
 
-	Widget buildBody(SearchCityViewModel model) {
+	Widget buildPageBody(SearchCityViewModel model) {
 		return Column(
 			children: <Widget>[
 				Expanded(
@@ -50,7 +50,7 @@ class _SearchCityPageState extends State<SearchCityPage> {
 						child: Material(
 							type: MaterialType.transparency,
 							child: Container(
-								color: WeatherAppTheme.primaryNttAccent(
+								color: WeatherAppTheme.primaryAccent(
 									context),
 								child: Padding(
 									padding: EdgeInsets.only(left: 24, right: 24, top: 48),
@@ -67,41 +67,7 @@ class _SearchCityPageState extends State<SearchCityPage> {
 								  				fontSize: 15
 								  			),
 								  		),
-								  		TextField(
-											autofocus: true,
-											onChanged: model.fetchPlaces,
-								  			style: TextStyle(
-												fontSize: 24,
-												color: WeatherAppTheme.primaryText(context)
-											),
-								  			decoration: InputDecoration(
-												contentPadding: EdgeInsets.zero,
-								  				border: OutlineInputBorder(
-								  					borderRadius: BorderRadius.circular(12),
-								  					borderSide: BorderSide(
-								  						style: BorderStyle.none,
-								  						color: Colors.transparent,
-								  						width: 0
-								  					),
-								  				),
-								  				enabledBorder: OutlineInputBorder(
-								  					borderRadius: BorderRadius.circular(12),
-								  					borderSide: BorderSide(
-								  						style: BorderStyle.none,
-								  						color: Colors.transparent,
-								  						width: 0
-								  					),
-								  				),
-								  				focusedBorder: OutlineInputBorder(
-								  					borderRadius: BorderRadius.circular(12),
-								  					borderSide: BorderSide(
-								  						style: BorderStyle.none,
-								  						color: Colors.transparent,
-								  						width: 0
-								  					),
-								  				),
-								  			),
-								  		)
+								  		buildTextField(model)
 								  	],
 								  ),
 								),
@@ -118,40 +84,9 @@ class _SearchCityPageState extends State<SearchCityPage> {
 							builder: (BuildContext context, AsyncSnapshot<List<GooglePlace>> snapshot) {
 								if(snapshot.hasData) {
 									if(snapshot.data.length != 0) {
-										return ListView.separated(
-											itemCount: snapshot.data.length,
-											separatorBuilder: (
-												BuildContext context,
-												int index) {
-												return SizedBox(
-													height: 16,
-												);
-											},
-											itemBuilder: (BuildContext context,
-												int index) {
-												return CityCell(
-													snapshot.data[index],
-													model.goToCityWeatherDetail
-												);
-											},
-										);
+										return buildList(snapshot.data, model);
 									} else {
-										return Column(
-											crossAxisAlignment: CrossAxisAlignment.stretch,
-										  	mainAxisAlignment: MainAxisAlignment.center,
-										  children: [
-											  Text(
-												  AppLocalizations.of(context).cityPageSearchNoResult,
-												  maxLines: 1,
-												  textAlign: TextAlign.start,
-												  style: TextStyle(
-													  color: WeatherAppTheme.primaryText(context),
-													  fontSize: 30,
-													  fontWeight: FontWeight.bold
-												  ),
-											  ),
-										  ],
-										);
+										return buildNoResult();
 									}
 								} else {
 									return Container();
@@ -160,6 +95,83 @@ class _SearchCityPageState extends State<SearchCityPage> {
 						)
 					)
 				)
+			],
+		);
+	}
+
+	Widget buildTextField(SearchCityViewModel model) {
+		return TextField(
+			autofocus: true,
+			onChanged: model.fetchPlaces,
+			style: TextStyle(
+				fontSize: 24,
+				color: WeatherAppTheme.primaryText(context)
+			),
+			decoration: InputDecoration(
+				contentPadding: EdgeInsets.zero,
+				border: OutlineInputBorder(
+					borderRadius: BorderRadius.circular(12),
+					borderSide: BorderSide(
+						style: BorderStyle.none,
+						color: Colors.transparent,
+						width: 0
+					),
+				),
+				enabledBorder: OutlineInputBorder(
+					borderRadius: BorderRadius.circular(12),
+					borderSide: BorderSide(
+						style: BorderStyle.none,
+						color: Colors.transparent,
+						width: 0
+					),
+				),
+				focusedBorder: OutlineInputBorder(
+					borderRadius: BorderRadius.circular(12),
+					borderSide: BorderSide(
+						style: BorderStyle.none,
+						color: Colors.transparent,
+						width: 0
+					),
+				),
+			),
+		);
+	}
+
+	Widget buildList(List<GooglePlace> places, SearchCityViewModel model) {
+		return ListView.separated(
+			itemCount: places.length,
+			separatorBuilder: (
+				BuildContext context,
+				int index) {
+				return SizedBox(
+					height: 16,
+				);
+			},
+			itemBuilder: (BuildContext context,
+				int index) {
+				return CityCell(
+					places[index],
+					model.goToCityWeatherDetail
+				);
+			},
+		);
+	}
+
+	Widget buildNoResult() {
+		return Column(
+			crossAxisAlignment: CrossAxisAlignment.stretch,
+			mainAxisAlignment: MainAxisAlignment.center,
+			children: [
+				Text(
+					AppLocalizations.of(context).cityPageSearchNoResult,
+					maxLines: 1,
+					textAlign: TextAlign.start,
+					style: TextStyle(
+						color: WeatherAppTheme.primaryText(context),
+						fontSize: 30,
+						fontWeight: FontWeight.bold
+					),
+				),
 			],
 		);
 	}

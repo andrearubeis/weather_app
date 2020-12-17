@@ -89,7 +89,7 @@ class _CityPageState extends State<CityPage> {
 					    child: Material(
 							type: MaterialType.transparency,
 					      child: Container(
-						  color: WeatherAppTheme.primaryNttAccent(context),
+						  color: WeatherAppTheme.primaryAccent(context),
 						  child: Padding(
 							  padding: EdgeInsets.symmetric(horizontal: 24),
 							  child: Stack(
