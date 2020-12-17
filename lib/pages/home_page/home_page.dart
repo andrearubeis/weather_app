@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:solid_bottom_sheet/solid_bottom_sheet.dart';
@@ -8,12 +8,12 @@ import 'package:weather_app/common/localization/app_localizations.dart';
 import 'package:weather_app/common/style/app_theme.dart';
 import 'package:weather_app/common/widgets/custom_app_bar.dart';
 import 'package:weather_app/common/widgets/custom_carousel.dart';
-import 'package:weather_app/common/widgets/weather_hour_cell.dart';
+import 'package:weather_app/common/widgets/loader.dart';
 import 'package:weather_app/model/open_weather_model/date_time_weather.dart';
 import 'package:weather_app/pages/home_page/home_view_model.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_app/pages/home_page/widget/home_page_next_days_bottom_sheet.dart';
-import 'package:weather_app/pages/splash_page/splash_page.dart';
+import 'package:weather_app/pages/home_page/widget/min_max_temperature.dart';
 
 class HomePage extends StatefulWidget {
 
@@ -41,45 +41,25 @@ class _HomePageState extends State<HomePage>  {
 			builder: (context, model, child) {
 				return Scaffold(
 					backgroundColor: WeatherAppTheme
-						.primaryNttAccent(context),
+						.primaryAccent(context),
 				  body: FutureBuilder(
 				  	future: model.weatherOnDay,
 				  	builder: (BuildContext context,
 				  		AsyncSnapshot<List<List<DateTimeWeather>>> snapshot) {
-						if (snapshot.hasData) {
-							return SafeArea(
-							  		bottom: false,
-							  		child: Column(
-							  			mainAxisSize: MainAxisSize.max,
-							  			crossAxisAlignment: CrossAxisAlignment
-							  				.stretch,
-							  			children: [
-							  				CustomAppBar(),
-							  				getDateAndCityInfo(
-							  					model, snapshot.data.first),
-							  				Expanded(
-							  					flex: 4,
-							  					child: buildTodayWeatherInfo(
-							  						snapshot.data.first.first,
-							  						model)
-							  				),
-							  				Spacer(
-							  					flex: 1,
-							  				),
-							  				CustomCarousel(
-							  					snapshot.data.first
-							  				),
-							  				Spacer(
-							  					flex: 2,
-							  				),
-							  			],
-							  		)
+						Widget child;
+						if (snapshot.connectionState == ConnectionState.waiting) {
+							child = Container(
+								color: WeatherAppTheme.primaryAccent(context),
+								child: Loader()
 							);
 						} else {
-							return Container(
-								color: WeatherAppTheme.primaryNttAccent(context),
-							);
+							child = buildPageBody(model, snapshot.data);
 						}
+
+						return AnimatedSwitcher(
+							duration: Duration(milliseconds: 350),
+							child: child,
+						);
 				  	}
 				  	),
 					bottomSheet: FutureBuilder(
@@ -89,13 +69,45 @@ class _HomePageState extends State<HomePage>  {
 								return HomePageNextDaysBottomSheet(snapshot.data, _controller);
 							} else {
 								return Container(
-									color: WeatherAppTheme.primaryNttAccent(context),
+									color: WeatherAppTheme.primaryAccent(context),
+									child: Loader()
 								);
 							}
 						},
 					),
 				);
 			});
+	}
+
+	Widget buildPageBody(HomeViewModel model, List<List<DateTimeWeather>> weatherInfo) {
+		return SafeArea(
+			bottom: false,
+			child: Column(
+				mainAxisSize: MainAxisSize.max,
+				crossAxisAlignment: CrossAxisAlignment
+					.stretch,
+				children: [
+					CustomAppBar(),
+					getDateAndCityInfo(
+						model, weatherInfo.first),
+					Expanded(
+						flex: 4,
+						child: buildTodayWeatherInfo(
+							weatherInfo.first.first,
+							model)
+					),
+					Spacer(
+						flex: 1,
+					),
+					CustomCarousel(
+						weatherInfo.first
+					),
+					Spacer(
+						flex: 2,
+					),
+				],
+			)
+		);
 	}
 	
 	Widget getDateAndCityInfo(HomeViewModel model, List<DateTimeWeather> weatherList) {
@@ -130,7 +142,7 @@ class _HomePageState extends State<HomePage>  {
 			children: [
 				Expanded(
 					flex: 5,
-					child: buildMinMaxTemperature(todayInfo.weatherDetail.tempMin)
+					child: buildMinMaxTemperature(todayInfo.weatherDetail.tempMin, MinMaxTemperatureType.MIN)
 				),
 				Expanded(
 					flex: 10,
@@ -138,24 +150,19 @@ class _HomePageState extends State<HomePage>  {
 				),
 				Expanded(
 					flex: 5,
-				  child: buildMinMaxTemperature(todayInfo.weatherDetail.tempMax),
+				  child: buildMinMaxTemperature(todayInfo.weatherDetail.tempMax, MinMaxTemperatureType.MAX),
 				),
 			],
 		);
 	}
 
-	Widget buildMinMaxTemperature(double temperature) {
+	Widget buildMinMaxTemperature(double temperature, MinMaxTemperatureType type) {
 		return Stack(
 			fit: StackFit.expand,
 			children: [
 				Align(
-					alignment: Alignment(0, -0.1),
-					child: Text(
-						temperature.floor().toString().toDegreeFormat(),
-						style: TextStyle(
-							fontSize: 24,
-						),
-					),
+					alignment: Alignment((type == MinMaxTemperatureType.MIN)? 1 : -1, -0.1),
+					child: MinMaxTemperature(temperature.floor().toString(), type)
 				)
 			],
 		);
